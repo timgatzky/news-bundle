@@ -124,26 +124,41 @@ abstract class ModuleNews extends Module
 		else
 		{
 			$id = $objArticle->id;
-
+			
 			$objTemplate->text = function () use ($id)
 			{
-				$strText = '';
-				$objElement = ContentModel::findPublishedByPidAndTable($id, 'tl_news');
-
-				if ($objElement !== null)
+				if( !$this->_text )
 				{
-					while ($objElement->next())
+					$strText = '';
+					$objElement = \ContentModel::findPublishedByPidAndTable($id, 'tl_news');
+
+					if ($objElement !== null)
 					{
-						$strText .= $this->getContentElement($objElement->current());
+						while ($objElement->next())
+						{
+							$strText .= $this->getContentElement($objElement->current());
+						}
+					}
+					
+					$this->_text = $strText;
+
+					// content is not empty, no need to count again
+					if( !empty($strText) )
+					{
+						$this->_hasText = true;
 					}
 				}
 
-				return $strText;
+				return $this->_text;
 			};
 
-			$objTemplate->hasText = static function () use ($objArticle)
+			$objTemplate->hasText = function () use ($objArticle)
 			{
-				return ContentModel::countPublishedByPidAndTable($objArticle->id, 'tl_news') > 0;
+				if( !$this->_hasText )
+				{
+					$this->_hasText = \ContentModel::countPublishedByPidAndTable($objArticle->id, 'tl_news') > 0;
+				}
+				return $this->_hasText;
 			};
 		}
 
