@@ -127,7 +127,7 @@ abstract class ModuleNews extends Module
 			
 			$objTemplate->text = function () use ($id)
 			{
-				if( !$this->_text )
+				if( !$objTemplate->_text )
 				{
 					$strText = '';
 					$objElement = \ContentModel::findPublishedByPidAndTable($id, 'tl_news');
@@ -140,25 +140,25 @@ abstract class ModuleNews extends Module
 						}
 					}
 					
-					$this->_text = $strText;
+					$objTemplate->_text = $strText;
 
 					// content is not empty, no need to count again
 					if( !empty($strText) )
 					{
-						$this->_hasText = true;
+						$objTemplate->_hasText = true;
 					}
 				}
 
-				return $this->_text;
+				return $objTemplate->_text;
 			};
 
 			$objTemplate->hasText = function () use ($objArticle)
 			{
-				if( !$this->_hasText )
+				if( !$objTemplate->_hasText )
 				{
-					$this->_hasText = \ContentModel::countPublishedByPidAndTable($objArticle->id, 'tl_news') > 0;
+					$objTemplate->_hasText = \ContentModel::countPublishedByPidAndTable($objArticle->id, 'tl_news') > 0;
 				}
-				return $this->_hasText;
+				return $objTemplate->_hasText;
 			};
 		}
 
